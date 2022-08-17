@@ -1449,8 +1449,9 @@ function iterate$1(iterator, callback) {
             dbInfo.db.transaction(function (t) {
                 (function executeSql() {
                     var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+                    var allResult = arguments[1];
 
-                    var results;
+                    allResult = allResult || null;
                     tryExecuteSql(t, dbInfo, 'SELECT * FROM ' + dbInfo.storeName + ' LIMIT ' + page * 20 + ', 20', [], function (t, results) {
                         var rows = results.rows;
                         var length = rows.length;
@@ -1470,8 +1471,11 @@ function iterate$1(iterator, callback) {
                             // void(0) prevents problems with redefinition
                             // of `undefined`.
                             if (result !== void 0) {
-                                resolve(result);
+                                // resolve(result);
+                                executeSql(page++, allResult);
                                 return;
+                            } else {
+                                resolve(allResult);
                             }
                         }
 

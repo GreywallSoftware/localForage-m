@@ -172,8 +172,8 @@ function iterate(iterator, callback) {
                 var dbInfo = self._dbInfo;
 
                 dbInfo.db.transaction(function(t) {
-                    (function executeSql(page = 0) {
-                        var results;
+                    (function executeSql(page = 0, allResult) {
+                        allResult = allResult || null;
                         tryExecuteSql(
                             t,
                             dbInfo,
@@ -201,8 +201,11 @@ function iterate(iterator, callback) {
                                     // void(0) prevents problems with redefinition
                                     // of `undefined`.
                                     if (result !== void 0) {
-                                        resolve(result);
+                                        // resolve(result);
+                                        executeSql(page++, allResult);
                                         return;
+                                    } else {
+                                        resolve(allResult);
                                     }
                                 }
 
