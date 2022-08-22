@@ -1815,7 +1815,7 @@ function iterate$1(iterator, callback) {
                         if (length < 20) {
                             resolve();
                         } else {
-                            executeSql(page++);
+                            executeSql(++page);
                         }
                     }, function (t, error) {
                         reject(error);
