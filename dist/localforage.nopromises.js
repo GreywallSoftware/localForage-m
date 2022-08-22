@@ -1449,13 +1449,13 @@ function iterate$1(iterator, callback) {
             dbInfo.db.transaction(function (t) {
                 (function executeSql() {
                     var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-                    var allResult = arguments[1];
 
-                    allResult = allResult || null;
                     tryExecuteSql(t, dbInfo, 'SELECT * FROM ' + dbInfo.storeName + ' LIMIT ' + page * 20 + ', 20', [], function (t, results) {
                         var rows = results.rows;
                         var length = rows.length;
-
+                        if (length === 0) {
+                            resolve();
+                        }
                         for (var i = 0; i < length; i++) {
                             var item = rows.item(i);
                             var result = item.value;
@@ -1471,15 +1471,16 @@ function iterate$1(iterator, callback) {
                             // void(0) prevents problems with redefinition
                             // of `undefined`.
                             if (result !== void 0) {
-                                // resolve(result);
-                                executeSql(page++, allResult);
-                                return;
-                            } else {
-                                resolve(allResult);
+                                resolve(result);
+                                // executeSql(page++, allResult);
+                                // return;
                             }
                         }
-
-                        resolve();
+                        if (length < 20) {
+                            resolve();
+                        } else {
+                            executeSql(page++);
+                        }
                     }, function (t, error) {
                         reject(error);
                     });
